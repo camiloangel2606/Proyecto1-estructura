@@ -1,0 +1,56 @@
+{
+    "valor": [
+        9854,
+        "Cerveza",
+        3300,
+        138,
+        "Bebidas"
+    ],
+    "izquierdo": {
+        "valor": [
+            2340,
+            "Pasta",
+            4.5,
+            112,
+            "Comida"
+        ],
+        "izquierdo": {
+            "valor": [
+                1234,
+                "Manzanas",
+                2500,
+                216,
+                "Comida"
+            ],
+            "izquierdo": null,
+            "derecho": null,
+            "altura": 0
+        },
+        "derecho": {
+            "valor": [
+                8967,
+                "Shampo",
+                80.0,
+                347,
+                "Aseo"
+            ],
+            "izquierdo": null,
+            "derecho": null,
+            "altura": 0
+        },
+        "altura": 1
+    },
+    "derecho": {
+        "valor": [
+            9875,
+            "Desodorante",
+            8750,
+            58,
+            "Aseo"
+        ],
+        "izquierdo": null,
+        "derecho": null,
+        "altura": 0
+    },
+    "altura": 2
+}
