@@ -153,7 +153,6 @@ def eliminar():
         
         # Guardar el árbol actualizado en el archivo JSON
         guardar_en_json(arbol)
-
         imprimir_arbol(arbol.raiz)
     else:
         print(f"No se encontró un producto con el ID {id_producto} en el inventario.")

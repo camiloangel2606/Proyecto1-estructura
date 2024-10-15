@@ -8,6 +8,28 @@ class NodoAVL:
         self.altura = 0
 
 class ArbolBinarioAVL:
+
+    def guardar_arbol_en_json(self, archivo="inventario.json"):
+        arbol= self.nodo_a_dict(self.raiz)  # Serializa correctamente
+        with open(archivo, 'w') as f:
+            json.dump(arbol, f, indent=4)
+    
+    # Cargar el árbol desde un archivo JSON
+    def cargar_desde_json(self, archivo):
+        try:
+            with open(archivo, 'r') as f:
+                arbol_dict = json.load(f)
+                if arbol_dict:  # Verificar que el archivo no esté vacío
+                    print("Contenido del archivo JSON:", arbol_dict)  # Imprimir el contenido
+                    self.raiz = self.dict_a_nodo(arbol_dict)  # Cargar todo el árbol directamente
+                    print(f"Árbol cargado desde {archivo}")
+                else:
+                    print(f"El archivo {archivo} está vacío.")
+        except FileNotFoundError:
+            print(f"El archivo {archivo} no se encontró.")
+        except json.JSONDecodeError as e:
+            print(f"Error al decodificar el archivo JSON: {e}")
+    
     def __init__(self):
         self.raiz = None
         self.cargar_desde_json("inventario.json")  # Cargar desde el archivo JSON al iniciar
@@ -97,14 +119,14 @@ class ArbolBinarioAVL:
 
         return nodo
 
-    def imprimir_arbol(self, nodo, nivel=0, prefijo="Raíz: "):
-        """
-        Imprime el árbol de manera gráfica en texto.
-        """
+    def imprimir_arbol(nodo, nivel=0, prefijo="Raíz: "):
         if nodo is not None:
-            print(" " * (nivel * 4) + prefijo + str(nodo.valor))
-            self.imprimir_arbol(nodo.izquierdo, nivel + 1, "Izq: ")
-            self.imprimir_arbol(nodo.derecho, nivel + 1, "Der: ")
+            resultado = " " * (nivel * 4) + prefijo + str(nodo.valor) + "\n"
+            resultado += imprimir_arbol(nodo.izquierdo, nivel + 1, "Izq: ")
+            resultado += imprimir_arbol(nodo.derecho, nivel + 1, "Der: ")
+            return resultado
+        return ""
+
 
     # Métodos para buscar por ID:
     def buscar(self, id_producto):
@@ -259,18 +281,3 @@ class ArbolBinarioAVL:
         nodo.derecho = self.dict_a_nodo(diccionario.get('derecho'))
         return nodo
 
-    # Cargar el árbol desde un archivo JSON
-    def cargar_desde_json(self, archivo):
-        try:
-            with open(archivo, 'r') as f:
-                arbol_dict = json.load(f)
-                if arbol_dict:  # Verificar que el archivo no esté vacío
-                    print("Contenido del archivo JSON:", arbol_dict)  # Imprimir el contenido
-                    self.raiz = self.dict_a_nodo(arbol_dict)  # Cargar todo el árbol directamente
-                    print(f"Árbol cargado desde {archivo}")
-                else:
-                    print(f"El archivo {archivo} está vacío.")
-        except FileNotFoundError:
-            print(f"El archivo {archivo} no se encontró.")
-        except json.JSONDecodeError as e:
-            print(f"Error al decodificar el archivo JSON: {e}")

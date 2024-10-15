@@ -4,9 +4,15 @@ import os
 from Models.Arbol import ArbolBinarioAVL
 
 #Copiar y pegar para ejecutar la interfaz: "streamlit run app.py"
+# Iniciar el árbol correctamente
+arbol = ArbolBinarioAVL()  # Solo inicializamos una vez
+ruta_json = os.path.join(os.getcwd(), "inventario.json")
+arbol.cargar_desde_json(ruta_json)
+arbol.guardar_arbol_en_json(ruta_json)
 
-# Iniciar el árbol
-arbol = ArbolBinarioAVL()
+# Recargar el árbol cada vez que se realice una operación
+def recargar_arbol():
+    return arbol.cargar_desde_json("inventario.json")
 
 # Definir las funciones
 def insertar():
@@ -37,6 +43,7 @@ def insertar():
                 st.write("El id del producto ya se encuentra en uso")
             else:
                 arbol.insertar(producto)
+                arbol.guardar_arbol_en_json(ruta_json)  # Guardar los cambios
                 st.success(f"Producto {producto} ingresado correctamente.")
                 # Mostrar el árbol actualizado
                 st.write("Árbol actual:")
@@ -53,8 +60,14 @@ def eliminar():
         try:
             id_producto = int(id_producto)
             nodo = arbol.buscar(id_producto)
+
             if nodo:
                 arbol.eliminar(id_producto)
+                arbol.guardar_arbol_en_json(ruta_json)  # Guardar los cambios
+                
+                # Recargar el árbol desde el archivo JSON para reflejar los cambios
+                arbol.cargar_desde_json("inventario.json")
+
                 st.success(f"Producto con ID {id_producto} eliminado correctamente.")
                 st.write("Árbol actualizado:")
                 st.text(imprimir_arbol(arbol.raiz))
@@ -64,6 +77,7 @@ def eliminar():
             st.error("Por favor, ingresa un ID numérico válido.")
 
 def buscar_por_id():
+    arbol.cargar_desde_json("inventario.json")
     st.subheader("Buscar producto por ID")
     id_producto = st.text_input("ID del Producto a buscar")
     
@@ -79,6 +93,7 @@ def buscar_por_id():
             st.error("Por favor, ingresa un ID numérico válido.")
 
 def buscar_por_precio():
+    arbol.cargar_desde_json("inventario.json")
     st.subheader("Buscar productos por rango de precios")
     min_precio = st.text_input("Precio mínimo")
     max_precio = st.text_input("Precio máximo")
@@ -97,6 +112,7 @@ def buscar_por_precio():
             st.error("Por favor, ingresa valores numéricos válidos para los precios.")
 
 def buscar_por_categoria():
+    arbol.cargar_desde_json("inventario.json")
     st.subheader("Buscar productos por categoría")
     categoria = st.selectbox("Categoría", ["Comida", "Aseo", "Bebidas"])
     
@@ -108,6 +124,7 @@ def buscar_por_categoria():
             st.warning(f"No se encontraron productos en la categoría {categoria}.")
 
 def actualizar_producto():
+    arbol.cargar_desde_json("inventario.json")
     st.subheader("Actualizar producto por ID")
     id_producto = st.text_input("ID del Producto a actualizar")
     
@@ -136,6 +153,7 @@ def actualizar_producto():
             st.error("Por favor, ingresa un ID numérico válido.")
 
 def imprimir_arbol(nodo, nivel=0, prefijo="Raíz: "):
+    arbol.cargar_desde_json("inventario.json")
     """
     Función auxiliar para imprimir el árbol en texto.
     """

@@ -8,36 +8,25 @@
     ],
     "izquierdo": {
         "valor": [
-            2340,
-            "Pasta",
-            4.5,
-            112,
+            1234,
+            "Manzanas",
+            2500,
+            216,
             "Comida"
         ],
         "izquierdo": {
             "valor": [
-                1234,
-                "Manzanas",
-                2500,
-                216,
+                0,
+                "Arroz",
+                3.0,
+                2000,
                 "Comida"
             ],
             "izquierdo": null,
             "derecho": null,
             "altura": 0
         },
-        "derecho": {
-            "valor": [
-                8967,
-                "Shampo",
-                80.0,
-                347,
-                "Aseo"
-            ],
-            "izquierdo": null,
-            "derecho": null,
-            "altura": 0
-        },
+        "derecho": null,
         "altura": 1
     },
     "derecho": {
