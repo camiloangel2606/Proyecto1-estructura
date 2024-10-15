@@ -1,0 +1,14 @@
+digraph {
+	node [shape=circle]
+	9854 [label="Cerveza
+ID: 9854"]
+	9854 -> 8457
+	8457 [label="Pan
+ID: 8457"]
+	8457 -> 8967
+	8967 [label="Shampo
+ID: 8967"]
+	9854 -> 9875
+	9875 [label="Desodorante
+ID: 9875"]
+}

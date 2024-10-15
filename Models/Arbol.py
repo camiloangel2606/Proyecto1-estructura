@@ -119,15 +119,6 @@ class ArbolBinarioAVL:
 
         return nodo
 
-    def imprimir_arbol(nodo, nivel=0, prefijo="Raíz: "):
-        if nodo is not None:
-            resultado = " " * (nivel * 4) + prefijo + str(nodo.valor) + "\n"
-            resultado += imprimir_arbol(nodo.izquierdo, nivel + 1, "Izq: ")
-            resultado += imprimir_arbol(nodo.derecho, nivel + 1, "Der: ")
-            return resultado
-        return ""
-
-
     # Métodos para buscar por ID:
     def buscar(self, id_producto):
         return self._buscar_nodo(self.raiz, id_producto)
@@ -281,3 +272,10 @@ class ArbolBinarioAVL:
         nodo.derecho = self.dict_a_nodo(diccionario.get('derecho'))
         return nodo
 
+def imprimir_arbol(nodo, nivel=0, prefijo="Raíz: "):
+        if nodo is not None:
+            resultado = " " * (nivel * 4) + prefijo + str(nodo.valor) + "\n"
+            resultado += imprimir_arbol(nodo.izquierdo, nivel + 1, "Izq: ")
+            resultado += imprimir_arbol(nodo.derecho, nivel + 1, "Der: ")
+            return resultado
+        return ""

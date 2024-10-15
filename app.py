@@ -2,9 +2,11 @@ import streamlit as st
 import sys
 import os
 from Models.Arbol import ArbolBinarioAVL
+from graphviz import Digraph
 
 #Copiar y pegar para ejecutar la interfaz: "streamlit run app.py"
 # Iniciar el árbol correctamente
+
 arbol = ArbolBinarioAVL()  # Solo inicializamos una vez
 ruta_json = os.path.join(os.getcwd(), "inventario.json")
 arbol.cargar_desde_json(ruta_json)
@@ -14,7 +16,41 @@ arbol.guardar_arbol_en_json(ruta_json)
 def recargar_arbol():
     return arbol.cargar_desde_json("inventario.json")
 
-# Definir las funciones
+def generar_imagen_arbol(nodo, dot=None):
+    """
+    Genera una imagen del árbol AVL usando Graphviz.
+    """
+    if dot is None:
+        dot = Digraph()
+        dot.attr('node', shape='circle')
+
+    if nodo is not None:
+        # Agregar nodo al gráfico
+        dot.node(str(nodo.valor[0]), label=f"{nodo.valor[1]}\nID: {nodo.valor[0]}")
+
+        # Si tiene hijo izquierdo, conectar
+        if nodo.izquierdo:
+            dot.edge(str(nodo.valor[0]), str(nodo.izquierdo.valor[0]))
+            generar_imagen_arbol(nodo.izquierdo, dot)
+
+        # Si tiene hijo derecho, conectar
+        if nodo.derecho:
+            dot.edge(str(nodo.valor[0]), str(nodo.derecho.valor[0]))
+            generar_imagen_arbol(nodo.derecho, dot)
+    return dot
+
+#Opción para visualizar el arbol actual sin necesidad de hacer alguna operación previa
+def visualizar_arbol():
+    """Visualiza el árbol sin necesidad de realizar operaciones."""
+    st.subheader("Árbol Binario AVL Actual")
+    if arbol.raiz:
+        # Generar o cargar la imagen del árbol
+        dot = generar_imagen_arbol(arbol.raiz)
+        dot.render("arbol_actualizado", format="png")  # Guardar la imagen como PNG
+        st.image("arbol_actualizado.png", caption="Árbol Binario AVL", use_column_width=True)
+    else:
+        st.warning("El árbol está vacío.")
+
 def insertar():
     st.subheader("Insertar un nuevo producto")
     
@@ -27,27 +63,37 @@ def insertar():
 
         # Enviar formulario
         submit = st.form_submit_button("Insertar Producto")
-    
+
     if submit:
-        # Convertir valores a su tipo correcto
         try:
+            # Convertir los valores a su tipo correcto
             id_producto = int(id_producto)
-            precio = float(precio.replace(",", ""))  # Eliminar comas en precios
+            precio = float(precio.replace(",", ""))
             cantidad = int(cantidad)
 
+            # Crear el producto como lista
             producto = [id_producto, nombre, precio, cantidad, categoria]
             nodo = arbol.buscar(id_producto)
-            
-            #Comprombamos de que el id no se encuentra ya en uso
+
             if nodo:
-                st.write("El id del producto ya se encuentra en uso")
+                st.warning(f"El ID del producto {id_producto} ya está en uso.")
             else:
+                # Insertar el producto en el árbol
                 arbol.insertar(producto)
-                arbol.guardar_arbol_en_json(ruta_json)  # Guardar los cambios
+                arbol.guardar_arbol_en_json(ruta_json)  # Guardar el árbol actualizado en JSON
+
+                # Generar y mostrar la imagen del árbol actualizado
+                dot = generar_imagen_arbol(arbol.raiz)
+                dot.render("arbol_actualizado", format="png")  # Guardar la imagen como PNG
+
+                # Mostrar mensajes de éxito e imagen del árbol
                 st.success(f"Producto {producto} ingresado correctamente.")
-                # Mostrar el árbol actualizado
                 st.write("Árbol actual:")
+                st.image("arbol_actualizado.png")  # Mostrar la imagen del árbol actualizado
+
+                # Mostrar el árbol en texto (opcional)
                 st.text(imprimir_arbol(arbol.raiz))
+
         except ValueError:
             st.error("Error: Por favor, ingresa valores válidos para los campos numéricos.")
 
@@ -64,17 +110,18 @@ def eliminar():
             if nodo:
                 arbol.eliminar(id_producto)
                 arbol.guardar_arbol_en_json(ruta_json)  # Guardar los cambios
-                
-                # Recargar el árbol desde el archivo JSON para reflejar los cambios
-                arbol.cargar_desde_json("inventario.json")
+
+                # Generar y mostrar la imagen del árbol actualizado
+                dot = generar_imagen_arbol(arbol.raiz)
+                dot.render("arbol_actualizado", format="png")  # Guarda la imagen como PNG
 
                 st.success(f"Producto con ID {id_producto} eliminado correctamente.")
-                st.write("Árbol actualizado:")
-                st.text(imprimir_arbol(arbol.raiz))
+                st.image("arbol_actualizado.png")  # Mostrar la imagen en Streamlit
             else:
                 st.warning(f"No se encontró un producto con el ID {id_producto}.")
         except ValueError:
             st.error("Por favor, ingresa un ID numérico válido.")
+
 
 def buscar_por_id():
     arbol.cargar_desde_json("inventario.json")
@@ -164,23 +211,16 @@ def imprimir_arbol(nodo, nivel=0, prefijo="Raíz: "):
         return resultado
     return ""
 
-# Nodos iniciales del árbol para probar
-nodos = [
-    [1234, "Manzanas", 2500, 216, "Comida"],
-    [9854, "Cerveza", 3300, 138, "Bebidas"],
-    [9875, "Desodorante", 8750, 58, "Aseo"]
-]
-
-for valor in nodos:
-    arbol.insertar(valor)
-
 # Interfaz de Streamlit
 st.title("Interfaz de Gestión de Inventarios")
 
 # Menú lateral
-opciones = st.sidebar.radio("Selecciona una opción", ("Insertar Producto", "Eliminar Producto", "Buscar Producto por ID", "Buscar por Precio", "Buscar por Categoría", "Actualizar Producto"))
+opciones = st.sidebar.radio("Selecciona una opción", ("Visualizar Árbol", "Insertar Producto", "Eliminar Producto", "Buscar Producto por ID", "Buscar por Precio", "Buscar por Categoría", "Actualizar Producto"))
 
-if opciones == "Insertar Producto":
+# Lógica para manejar la opción seleccionada
+if opciones == "Visualizar Árbol":
+    visualizar_arbol()
+elif opciones == "Insertar Producto":
     insertar()
 elif opciones == "Eliminar Producto":
     eliminar()

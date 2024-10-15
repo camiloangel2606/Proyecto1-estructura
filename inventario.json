@@ -8,26 +8,26 @@
     ],
     "izquierdo": {
         "valor": [
-            1234,
-            "Manzanas",
-            2500,
-            216,
+            8457,
+            "Pan",
+            3.3,
+            83,
             "Comida"
         ],
-        "izquierdo": {
+        "izquierdo": null,
+        "derecho": {
             "valor": [
-                0,
-                "Arroz",
-                3.0,
-                2000,
+                8967,
+                "Shampo",
+                4.5,
+                670,
                 "Comida"
             ],
             "izquierdo": null,
             "derecho": null,
             "altura": 0
         },
-        "derecho": null,
-        "altura": 1
+        "altura": 0
     },
     "derecho": {
         "valor": [
@@ -41,5 +41,5 @@
         "derecho": null,
         "altura": 0
     },
-    "altura": 2
+    "altura": 0
 }
