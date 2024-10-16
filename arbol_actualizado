@@ -1,7 +1,7 @@
 digraph {
 	node [shape=circle]
 	6569 [label="Maíz
-ID: 6569" fillcolor="#99ff99" style=filled]
+ID: 6569"]
 	6569 -> 4587
 	4587 [label="Pescado
 ID: 4587"]

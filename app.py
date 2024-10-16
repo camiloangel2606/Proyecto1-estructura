@@ -45,6 +45,11 @@ def generar_imagen_arbol(nodo, nodo_encontrado=None, nodos_rotados=None, nodo_in
 
     return dot
 
+CATEGORIAS = [#Inicializamos las categorías que tendremos para seleccionar en la interfaz
+    "Comida", "Aseo", "Bebidas", "Alcohol", "Medicina",
+    "Electrónicos", "Cocina", "Jardín", "Niños", "Juegos"
+]
+
 def insertar():
     st.subheader("Insertar un nuevo producto")
     with st.form("Formulario de inserción"):
@@ -52,8 +57,37 @@ def insertar():
         nombre = st.text_input("Nombre del Producto", key="nombre_producto")
         precio = st.text_input("Precio del Producto", key="precio_producto")
         cantidad = st.text_input("Cantidad", key="cantidad_producto")
-        categoria = st.selectbox("Categoría", ["Comida", "Aseo", "Bebidas"], key="categoria_producto")
+        categoria = st.selectbox("Categoría", CATEGORIAS, key="categoria_producto")
         submit = st.form_submit_button("Insertar Producto")
+
+    if submit:
+        try:
+            id_producto = int(id_producto)
+            precio = float(precio.replace(",", ""))
+            cantidad = int(cantidad)
+            producto = [id_producto, nombre, precio, cantidad, categoria]
+
+            nodo = arbol.buscar(id_producto)
+            if nodo:
+                st.warning(f"El ID del producto {id_producto} ya está en uso.")
+            else:
+                rotaciones = arbol.insertar_con_rotaciones(producto)
+                arbol.guardar_en_json(ruta_json)
+
+                dot = generar_imagen_arbol(arbol.raiz, nodo_insertado=arbol.buscar(id_producto), nodos_rotados=rotaciones)
+                dot.render("arbol_actualizado", format="png")
+
+                st.success(f"Producto {nombre} ingresado correctamente.")
+                st.image("arbol_actualizado.png", caption="Árbol Actualizado", use_column_width=True)
+
+                if rotaciones:
+                    st.write("Rotaciones realizadas:")
+                    for rotacion in rotaciones:
+                        st.text(rotacion)
+                else:
+                    st.write("No se realizaron rotaciones.")
+        except ValueError:
+            st.error("Error: Por favor, ingresa valores válidos para los campos numéricos.")
 
     if submit:
         try:
@@ -184,8 +218,8 @@ def buscar_por_precio():
 def buscar_por_categoria():
     arbol.cargar_desde_json("inventario.json")
     st.subheader("Buscar productos por categoría")
-    categoria = st.selectbox("Categoría", ["Comida", "Aseo", "Bebidas"])
-    
+    categoria = st.selectbox("Categoría", CATEGORIAS)
+
     if st.button("Buscar por categoría"):
         resultados = arbol.buscar_por_categoria(arbol.raiz, categoria, [])
         if resultados:
@@ -218,31 +252,56 @@ def buscar_avanzada():
 def actualizar_producto():
     arbol.cargar_desde_json("inventario.json")
     st.subheader("Actualizar producto por ID")
+
+    # Definir una clave única para almacenar el producto en el estado de sesión
+    if 'producto_encontrado' not in st.session_state:
+        st.session_state.producto_encontrado = None
+
+    # Buscar producto por ID
     id_producto = st.text_input("ID del Producto a actualizar")
-    
+
     if st.button("Buscar Producto para Actualizar"):
         try:
             id_producto = int(id_producto)
             nodo = arbol.buscar(id_producto)
+
             if nodo:
-                st.write(f"Producto encontrado: {nodo.valor}")
-                
-                nueva_categoria = st.selectbox("Nueva Categoría", ["Comida", "Aseo", "Bebidas"])
-                nuevo_precio = st.text_input("Nuevo Precio", value=str(nodo.valor[2]))
-                nueva_cantidad = st.text_input("Nueva Cantidad", value=str(nodo.valor[3]))
-                
-                if st.button("Actualizar Producto"):
-                    try:
-                        nodo.valor[2] = float(nuevo_precio)
-                        nodo.valor[3] = int(nueva_cantidad)
-                        nodo.valor[4] = nueva_categoria
-                        st.success(f"Producto con ID {id_producto} actualizado correctamente.")
-                    except ValueError:
-                        st.error("Por favor, ingresa valores numéricos válidos para precio y cantidad.")
+                st.session_state.producto_encontrado = nodo  # Guardar producto encontrado en session_state
+                st.success(f"Producto encontrado: {nodo.valor}")
             else:
                 st.warning(f"No se encontró un producto con el ID {id_producto}.")
         except ValueError:
             st.error("Por favor, ingresa un ID numérico válido.")
+
+    # Si se encontró un producto, mostrar el formulario de actualización
+    if st.session_state.producto_encontrado:
+        nodo = st.session_state.producto_encontrado
+
+        # Mostrar los valores actuales y permitir su actualización
+        nueva_categoria = st.selectbox(
+            "Nueva Categoría",
+            ["Comida", "Aseo", "Bebidas", "Alcohol", "Medicina", "Electrónicos",
+            "Cocina", "Jardín", "Niños", "Juegos"],
+            index=["Comida", "Aseo", "Bebidas", "Alcohol", "Medicina", "Electrónicos",
+            "Cocina", "Jardín", "Niños", "Juegos"].index(nodo.valor[4])
+        )
+        nuevo_precio = st.text_input("Nuevo Precio", value=str(nodo.valor[2]))
+        nueva_cantidad = st.text_input("Nueva Cantidad", value=str(nodo.valor[3]))
+
+        if st.button("Actualizar Producto"):
+            try:
+                nodo.valor[2] = float(nuevo_precio)
+                nodo.valor[3] = int(nueva_cantidad)
+                nodo.valor[4] = nueva_categoria
+
+                arbol.guardar_en_json(ruta_json)  # Guardar cambios
+                st.success(f"Producto con ID {id_producto} actualizado correctamente.")
+
+                # Limpiar el estado de sesión después de actualizar
+                st.session_state.producto_encontrado = None
+            except ValueError:
+                st.error("Por favor, ingresa valores numéricos válidos para precio y cantidad.")
+
 
 # Interfaz de Streamlit
 st.title("Interfaz de Gestión de Inventarios")
