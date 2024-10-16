@@ -1,45 +1,71 @@
 {
     "valor": [
-        9854,
-        "Cerveza",
-        3300,
-        138,
-        "Bebidas"
+        6569,
+        "Ma\u00edz",
+        6.78,
+        345,
+        "Comida"
     ],
     "izquierdo": {
         "valor": [
-            8457,
-            "Pan",
-            3.3,
-            83,
+            4587,
+            "Pescado",
+            85.0,
+            124,
             "Comida"
         ],
-        "izquierdo": null,
-        "derecho": {
+        "izquierdo": {
             "valor": [
-                8967,
-                "Shampo",
-                4.5,
-                670,
+                4399,
+                "Harina",
+                8.9,
+                345,
                 "Comida"
             ],
-            "izquierdo": null,
-            "derecho": null,
-            "altura": 0
+            "izquierdo": {},
+            "derecho": {}
         },
-        "altura": 0
+        "derecho": {
+            "valor": [
+                5674,
+                "Ajo",
+                8.0,
+                456,
+                "Comida"
+            ],
+            "izquierdo": {},
+            "derecho": {}
+        }
     },
     "derecho": {
         "valor": [
-            9875,
-            "Desodorante",
-            8750,
-            58,
-            "Aseo"
+            9598,
+            "Tequila",
+            105.65,
+            345,
+            "Bebidas"
         ],
-        "izquierdo": null,
-        "derecho": null,
-        "altura": 0
-    },
-    "altura": 0
+        "izquierdo": {},
+        "derecho": {
+            "valor": [
+                9875,
+                "Desodorante",
+                8750,
+                58,
+                "Aseo"
+            ],
+            "izquierdo": {
+                "valor": [
+                    9599,
+                    "Pan",
+                    3.4,
+                    200,
+                    "Comida"
+                ],
+                "izquierdo": {},
+                "derecho": {}
+            },
+            "derecho": {}
+        }
+    }
 }

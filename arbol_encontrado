@@ -1,16 +1,16 @@
 digraph {
 	node [shape=circle]
 	6569 [label="Maíz
-ID: 6569" fillcolor="#99ff99" style=filled]
-	6569 -> 4587
-	4587 [label="Pescado
-ID: 4587"]
-	4587 -> 4399
-	4399 [label="Harina
-ID: 4399"]
-	4587 -> 5674
+ID: 6569" fillcolor="#ffcc99" style=filled]
+	6569 -> 6526
+	6526 [label="Cerveza
+ID: 6526"]
+	6526 -> 5674
 	5674 [label="Ajo
 ID: 5674"]
+	5674 -> 4399
+	4399 [label="Harina
+ID: 4399"]
 	6569 -> 9598
 	9598 [label="Tequila
 ID: 9598"]
